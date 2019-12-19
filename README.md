@@ -1,2 +1,2 @@
 # mangbabardot
-random
+SMS API
