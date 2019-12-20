@@ -62,7 +62,7 @@ def testSMS(counter):
     x = smscol.find_one({"Status":"Pending"})
     penMessage = x['Message']
     sender = x['Sender']
-    num = x['Receiver'] ## change number
+    num = "639062035786" ## change number
     modem.write(bytes('AT+CMGS="%s"r\r\n' % num)) 
     modem.write(bytes("Message: %s" % penMessage))
     modem.write(bytes("Sender: %s" % sender))
@@ -102,7 +102,7 @@ def main():
             counter += 1 ##test
             print previous_time
             print(counter)
-            print(x)
+            print(x['Message'])
     modem.close()
 
 if __name__ == '__main__':

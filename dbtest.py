@@ -20,7 +20,10 @@ def serial(dct):
             dct[k] = str(dct[k])
     return dct
 
-
+class Connect(object):
+    @staticmethod
+    def get_connection():
+        return myclient
 
 app = Flask(__name__)
 
@@ -29,15 +32,29 @@ app = Flask(__name__)
 def login():
     return ("Log in")
 
-"""@app.route('/test1/sendsms', methods=['POST'])
+@app.route('/test1/sms', methods=['GET'])
+def get_sms():
+
+   for x in smscol.find():
+        print(x)
+        sms = [serial(item) for item in smscol.find()]
+        return jsonify({'Messages': sms})
+    
+@app.route('/test1/sms', methods=['DELETE'])
+def del_contact1():
+
+    smscol.delete_many({})
+    
+@app.route('/test1/sendsms', methods=['POST'])
 def send_sms():
     
     sms = {"Sender":request.json["Sender"],
            "Receiver":request.json["Receiver"],
-           "Message":request.json["Message"]
+           "Message":request.json["Message"],
+           "Status": "Pending"
            }
     y = smscol.insert_one(sms)
-    """
+    return jsonify({"Result":"Message Added to Pending."})
 
 """//DISPLAY CONTACTS//"""
 @app.route('/test1/contacts', methods=['GET'])
@@ -46,8 +63,8 @@ def get_contacts():
     response = ["Contacts"]
     for contact in contacts:
         contact['_id'] = str(contact['_id'])
-        response.append(contact)
-    return jsonify(response)"""
+        response.append(contact) 
+   return jsonify(response)"""
    """contactlist = mydb.numcol.countDocuments({})
    if contactlist == 0:
        return ("Contacts empty.")
