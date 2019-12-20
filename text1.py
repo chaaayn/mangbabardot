@@ -15,7 +15,7 @@ smscol = mydb["sms"]
 def Startup():
     print ("Start")
     global modem
-##    global counter ##test
+##  global counter ##test
     portlist = list(serial.tools.list_ports.comports())
 ##    print portlist
     for port in reversed(portlist):
@@ -41,9 +41,6 @@ def Startup():
         print "modem is open: ", modem.isOpen()
         
     time.sleep(5)
-    
-    sender = mydb.smscol.find({"Status":"Pending"})
-    pprint(sender)
 
     modem.write(bytes('AT\r\n')) #AT
     modem.readline()
@@ -62,10 +59,13 @@ def Startup():
 
 def testSMS(counter):
     stat = True
-    
-    num = "639058024311" ## change number
-    modem.write(bytes('AT+CMGS="%s"r\r\n' % num))
-    modem.write(bytes("test message: #%s" % counter))
+    x = smscol.find_one({"Status":"Pending"})
+    penMessage = x['Message']
+    sender = x['Sender']
+    num = x['Receiver'] ## change number
+    modem.write(bytes('AT+CMGS="%s"r\r\n' % num)) 
+    modem.write(bytes("Message: %s" % penMessage))
+    modem.write(bytes("Sender: %s" % sender))
     modem.write(bytes(ascii.ctrl('z')))
     modem.write(bytes('\r\n'))
 
@@ -93,6 +93,7 @@ def testSMS(counter):
     
 
 def main():
+    x = smscol.find_one({"Status":"Pending"}, {"_id": 0, "Message":1})
     current_time = time.time()
     previous_time = time.ctime(current_time)
     counter = 34 ##test
@@ -101,7 +102,8 @@ def main():
             counter += 1 ##test
             print previous_time
             print(counter)
-
+            print(x)
+    modem.close()
 
 if __name__ == '__main__':
     Startup()
