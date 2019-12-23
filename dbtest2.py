@@ -11,7 +11,6 @@ numcol = mydb["number"]
 smscol = mydb["sms"]
 
 x = smscol.find_one({"Status":"Pending"})
-print(x['Message'])
-print(x['Sender'])
-print(x['Receiver'])
-print(prev_time)
+smscol.update_one({"Status":"Pending"},
+                  { "$set": {"Status":"Processed"}})
+print (x['Status'])

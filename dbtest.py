@@ -20,14 +20,9 @@ def serial(dct):
             dct[k] = str(dct[k])
     return dct
 
-class Connect(object):
-    @staticmethod
-    def get_connection():
-        return myclient
-
 app = Flask(__name__)
 
-"""///LOG IN  PAGE///"""
+"""///TEST LOG IN PAGE///"""
 @app.route('/test1/login')
 def login():
     return ("Log in")
