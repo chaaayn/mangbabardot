@@ -31,14 +31,19 @@ def login():
 def get_sms():
 
    for x in smscol.find():
-        print(x)
-        sms = [serial(item) for item in smscol.find()]
-        return jsonify({'Messages': sms})
+       if x == None:
+           print "Messages empty."
+       else:
+           print(x)
+           sms = [serial(item) for item in smscol.find()]
+           return jsonify({'Messages': sms})
     
 @app.route('/test1/sms', methods=['DELETE'])
-def del_contact1():
+def del_sms():
 
-    smscol.delete_many({})
+    del_sms = request.get_json()
+    smscol.delete_one(del_sms)
+    return redirect(url_for('get_sms'))
     
 @app.route('/test1/sendsms', methods=['POST'])
 def send_sms():
