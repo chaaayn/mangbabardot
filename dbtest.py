@@ -75,6 +75,7 @@ def get_contacts():
         return jsonify({'Contacts': data})
     
 """///ADD CONTACT///"""
+
 @app.route('/test1/contacts', methods=['POST'])
 def add_contact():
     
@@ -95,6 +96,14 @@ def del_contact():
     del_cont = request.get_json()
     numcol.delete_one(del_cont)
     return redirect(url_for('get_contacts'))
+
+@app.route('/test1/reports', methods=['GET'])
+def get_reports():
+    get_sent = smscol.count_documents({"Status":"Processed"})
+    get_pending = smscol.count_documents({"Status":"Pending"})
+    return jsonify({"Sent messages ": get_sent,
+                   "Unsent messages": get_pending})
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
