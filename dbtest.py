@@ -1,4 +1,5 @@
 import pymongo, pprint, time, os
+from datetime import datetime
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 from flask import Flask, jsonify, request, abort, make_response, redirect, url_for
@@ -11,8 +12,7 @@ mydb = myclient["testdb"]
 numcol = mydb["number"]
 smscol = mydb["sms"]
 
-cur_time = time.time()
-prev_time = time.ctime(cur_time)
+testcount = 0
 
 def serial(dct):
     for k in dct:
@@ -31,10 +31,9 @@ def login():
 def get_sms():
 
    for x in smscol.find():
-       if x == None:
-           print "Messages empty."
+       if x is None:
+           return jsonify({"Messages": " Empty"})
        else:
-           print(x)
            sms = [serial(item) for item in smscol.find()]
            return jsonify({'Messages': sms})
     
@@ -47,12 +46,14 @@ def del_sms():
     
 @app.route('/test1/sendsms', methods=['POST'])
 def send_sms():
-    
+    cur_time = datetime.now()
     sms = {"Sender":request.json["Sender"],
            "Receiver":request.json["Receiver"],
            "Message":request.json["Message"],
-           "Status": "Pending"
+           "Status": "Pending",
+           "Date": cur_time
            }
+    
     y = smscol.insert_one(sms)
     return jsonify({"Result":"Message Added to Pending."})
 
@@ -93,12 +94,14 @@ def add_contact():
 """///DELETE CONTACT///"""
 @app.route('/test1/contacts', methods=['DELETE'])
 def del_contact():
+
     del_cont = request.get_json()
     numcol.delete_one(del_cont)
     return redirect(url_for('get_contacts'))
 
 @app.route('/test1/reports', methods=['GET'])
 def get_reports():
+    cur_time = datetime.now()
     get_sent = smscol.count_documents({"Status":"Processed"})
     get_pending = smscol.count_documents({"Status":"Pending"})
     return jsonify({"Sent messages ": get_sent,
@@ -106,4 +109,5 @@ def get_reports():
     
 
 if __name__ == '__main__':
+
     app.run(debug=True)

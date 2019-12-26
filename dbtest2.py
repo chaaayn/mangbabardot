@@ -18,8 +18,6 @@ smscol.update_one({"Status":"Pending"},
                   { "$set": {"Status":"Processed"}})"""
 y = smscol.count_documents({"Status":"Processed"})
 print "Sent messages:" + str(y)
-
-
 x = smscol.count_documents({"Status":"Pending"})
 print "Pending messages:" + str(x)
 """for y in x:

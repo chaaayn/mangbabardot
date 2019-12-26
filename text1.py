@@ -89,13 +89,14 @@ def testSMS(counter):
 
     if y.startswith('OK'):
         print('sent')
-            
+        time.sleep(3)
+        smscol.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
     elif y.startswith('+CMS') or y.startswith('^RSSI'):
         print('failed')
     
 
 def main():
-    
+  
     current_time = time.time()
     previous_time = time.ctime(current_time)
     counter = 34 ##test
@@ -104,7 +105,6 @@ def main():
             counter += 1 ##test
             print previous_time
             print(counter)
-            print(x['Message'])
             print(num)
     modem.close()
 
