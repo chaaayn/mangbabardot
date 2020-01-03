@@ -64,12 +64,17 @@ def testSMS(counter):
     global num
     sender = x['Sender']
     num = x['Receiver']
-    modem.write(bytes('AT+CMGS="%s"r\r\n' % num)) 
-    modem.write(bytes("Message: %s" % penMessage))
-    modem.write(bytes("Sender: %s" % sender))
+    date1 = x['Date']
+    modem.write(bytes('AT+CMGS="%s"\r\n' % num))
+    time.sleep(0.5)
+    modem.write(bytes('Message: "%s"\r\n' % penMessage))
+    time.sleep(0.5)
+    modem.write(bytes('Sender: "%s"\r\n' % sender))
+    time.sleep(0.5)
+    modem.write(bytes('Date: "%s"\r\n' % date1))
+    time.sleep(0.5)
     modem.write(bytes(ascii.ctrl('z')))
-    modem.write(bytes('\r\n'))
-
+    time.sleep(0.5)
     while stat:
         a = modem.readlines(modem.inWaiting())
         z = []
@@ -89,17 +94,15 @@ def testSMS(counter):
 
     if y.startswith('OK'):
         print('sent')
-        time.sleep(3)
         smscol.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
     elif y.startswith('+CMS') or y.startswith('^RSSI'):
         print('failed')
-    
 
 def main():
   
     current_time = time.time()
     previous_time = time.ctime(current_time)
-    counter = 34 ##test
+    counter = 0 ##test
     while True:
             testSMS(counter) ##test
             counter += 1 ##test
