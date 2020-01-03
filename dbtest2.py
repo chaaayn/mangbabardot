@@ -29,11 +29,14 @@ print "Pending messages:" + str(x)
             simcount = 0
             simcount += 1
             print simcount"""
-xy = smscol.find({"Status":"Pending"}, {"_id": 0, "Status":0, "Receiver":0})
+"""xy = smscol.find({"Status":"Pending"}, {"_id": 0, "Status":0, "Receiver":0})
 for i in xy:
     print str(i)
     xyz = len(str(i))
     print xyz - 24
     if (xyz -24) < 160:
-        print "Nice"
-    
+        print "Nice" """
+xy = smscol.find_one({"Status":"Processed"})
+xx = str(xy['Date'])
+xyy = xx[0:19]
+print xyy

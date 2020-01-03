@@ -31,7 +31,7 @@ def login():
 def get_sms():
 
    for x in smscol.find():
-       if x is None:
+       if smscol.find() is None:
            return jsonify({"Messages": " Empty"})
        else:
            sms = [serial(item) for item in smscol.find()]
@@ -47,15 +47,17 @@ def del_sms():
 @app.route('/test1/sendsms', methods=['POST'])
 def send_sms():
     cur_time = datetime.now()
-    sms = {"Sender":request.json["Sender"],
-           "Receiver":request.json["Receiver"],
-           "Message":request.json["Message"],
-           "Status": "Pending",
-           "Date": cur_time
-           }
-    
-    y = smscol.insert_one(sms)
-    return jsonify({"Result":"Message Added to Pending."})
+    if len(request.json['Receiver']) == 12:
+        sms = {"Sender":request.json["Sender"],
+               "Receiver":request.json["Receiver"],
+               "Message":request.json["Message"],
+               "Status": "Pending",
+               "Date": cur_time
+               }
+        y = smscol.insert_one(sms)
+        return jsonify({"Result":"Message Added to Pending."})
+    else:
+        return jsonify({"Result":"Invalid Number."})
 
 """//DISPLAY CONTACTS//"""
 @app.route('/test1/contacts', methods=['GET'])
