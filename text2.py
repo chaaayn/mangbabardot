@@ -23,7 +23,7 @@ smart = [ "63813", "63908", "63911", "63913", "63914", "63918", "63913", "63919"
 def CheckCarrier():
     simcheck = smscol.find_one({"Status":"Pending"})
     sim_number = simcheck['Receiver']
-    sim_prefix = sim_number[0:5] 
+    sim_prefix = sim_number[0:5]
     if sim_prefix in globe:
         StartupGlobe()
     elif sim_prefix in smart:
@@ -138,13 +138,13 @@ def testSMS():
         for q in z:
             y = a[q]
 
-    print(y, 'sent?')
+    print(y, 'Sent?')
 
     if y.startswith('OK'):
-        print('sent')
+        print('Sent')
         smscol.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
     elif y.startswith('+CMS') or y.startswith('^RSSI'):
-        print('failed')
+        print('Failed.')
 
 def main():
   
@@ -152,7 +152,7 @@ def main():
     previous_time = time.ctime(current_time)
     counter = 0 ##test
     while True:
-            testSMS(counter) ##test
+            CheckCarrier() ##test
             counter += 1 ##test
             print previous_time
             print(counter)
