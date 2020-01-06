@@ -40,3 +40,17 @@ xy = smscol.find_one({"Status":"Processed"})
 xx = str(xy['Date'])
 xyy = xx[0:19]
 print xyy
+
+ab = xy['Receiver']
+abc = ab[0:5]
+abcd = ab[8:12]
+print abc, abcd
+globe = [ "63905", "63915" ]
+if ab[0:5] in globe:
+    print "Globe"
+
+simtest.insert({"Globe": "Globe sent", "Number": 0})
+simtest.update_one({"Globe": "Globe sent"}, { "$set": {"Number": 1}})
+q = simtest.find_one()
+print ("Sent messages: " + str(q["Number"]))
+
