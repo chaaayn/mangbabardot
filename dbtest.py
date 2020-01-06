@@ -29,13 +29,15 @@ def login():
 
 @app.route('/test1/sms', methods=['GET'])
 def get_sms():
-
-   for x in smscol.find():
-       if smscol.find() is None:
-           return jsonify({"Messages": " Empty"})
-       else:
-           sms = [serial(item) for item in smscol.find()]
-           return jsonify({'Messages': sms})
+    if smscol.count_documents({}) == 0:
+        return ("No message available.")
+    else:
+        for x in smscol.find():
+           if smscol.find() is None:
+               return jsonify({"Messages": " Empty"})
+           else:
+               sms = [serial(item) for item in smscol.find()]
+               return jsonify({'Messages': sms})
     
 @app.route('/test1/sms', methods=['DELETE'])
 def del_sms():
@@ -43,7 +45,7 @@ def del_sms():
     del_sms = request.get_json()
     smscol.delete_one(del_sms)
     return redirect(url_for('get_sms'))
-    
+
 @app.route('/test1/sendsms', methods=['POST'])
 def send_sms():
     cur_time = datetime.now()
@@ -72,7 +74,11 @@ def get_contacts():
    if contactlist == 0:
        return ("Contacts empty.")
    elif contactlist >= 1:"""
-   for x in numcol.find():
+   xy = numcol.count_documents({})
+   if xy == 0:
+       return ("Contacts empty.")
+   else:
+       for x in numcol.find():
         print(x)
         data = [serial(item) for item in numcol.find()]
         return jsonify({'Contacts': data})
@@ -112,4 +118,4 @@ def get_reports():
 
 if __name__ == '__main__':
 
-    app.run(debug=True)
+    app.run(host='192.168.0.98')

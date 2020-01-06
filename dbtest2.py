@@ -53,4 +53,3 @@ simtest.insert({"Globe": "Globe sent", "Number": 0})
 simtest.update_one({"Globe": "Globe sent"}, { "$set": {"Number": 1}})
 q = simtest.find_one()
 print ("Sent messages: " + str(q["Number"]))
-
