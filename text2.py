@@ -154,6 +154,7 @@ def testSMS():
             print('Failed.')
             
     elif len(penMessage) > 130:
+        stat = True
         global num
         sender = x['Sender']
         num = x['Receiver']
@@ -190,7 +191,7 @@ def testSMS():
             print('Sent')   
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
-
+        stat = True
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
         modem.write(bytes('(2 of 2) Message: "%s"\r\n' % message2))
@@ -225,6 +226,7 @@ def testSMS():
             print('Failed.')
 
     elif len(penMessage) > 300:
+        stat = True
         global num
         sender = x['Sender']
         num = x['Receiver']
@@ -262,6 +264,8 @@ def testSMS():
                 
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
+
+        stat = True
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
         modem.write(bytes('(2 of 3) Message: "%s"\r\n' % message2))
@@ -290,7 +294,7 @@ def testSMS():
                
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')    
-
+        stat = True
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
         modem.write(bytes('(3 of 3) Message: "%s"\r\n' % message3))
@@ -331,7 +335,7 @@ def main():
     current_time = time.time()
     previous_time = time.ctime(current_time)
     while True:
-            CheckMessage()
+        CheckMessage()
     modem.close()
 
 if __name__ == '__main__':
