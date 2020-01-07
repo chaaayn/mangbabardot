@@ -79,8 +79,8 @@ def StartupSmart():
     for port in reversed(portlist):
 
         try:
-            if "ZTE WCDMA Technologies MSM" == port[0]:
-                print "Device connected.", port[0]
+            if "ZTE WCDMA Technologies MSM" == port[1]:
+                print "Device connected.", port[1]
                 modem = serial.Serial(port[0], 115200, timeout = 5)
                 break 
             else:
@@ -287,7 +287,7 @@ def testSMS():
 
         if y.startswith('OK'):
             print('Sent')
-            smscol.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})       
+               
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')    
 
@@ -320,7 +320,7 @@ def testSMS():
     
         if y.startswith('OK'):
             print('Sent')
-            
+            smscol.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
         
