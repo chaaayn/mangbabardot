@@ -20,17 +20,23 @@ smart = [ "63813", "63908", "63911", "63913", "63914", "63918", "63913", "63919"
           "63920", "63921", "63928", "63929", "63939", "63947", "63949", "63961",
           "63970", "63981", "63989", "63998", "63999"]
 
-def CheckCarrier():
+def CheckMessage():
     simcheck = smscol.find_one({"Status":"Pending"})
-    sim_number = simcheck['Receiver']
-    sim_prefix = sim_number[0:5]
-    if sim_prefix in globe:
-        StartupGlobe()
-    elif sim_prefix in smart:
-        StartupSmart()
+    if simcheck is None:
+        print "No more messages."
+    else:
+        sim_number = simcheck['Receiver']
+        sim_prefix = sim_number[0:5]
+        if sim_prefix in globe:
+            print "Globe"
+            StartupGlobe()
+            
+        elif sim_prefix in smart:
+            print "Smart"
+            StartupSmart()
         
 def StartupGlobe():
-    print ("Start")
+    print ("Starting Globe")
     global modem
     portlist = list(serial.tools.list_ports.comports())
     for port in reversed(portlist):
@@ -67,7 +73,7 @@ def StartupGlobe():
     testSMS()
 
 def StartupSmart():
-    print ("Start")
+    print ("Starting Smart")
     global modem
     portlist = list(serial.tools.list_ports.comports())
     for port in reversed(portlist):
@@ -324,13 +330,8 @@ def main():
   
     current_time = time.time()
     previous_time = time.ctime(current_time)
-    counter = 0 ##test
     while True:
-            CheckCarrier() ##test
-            counter += 1 ##test
-            print previous_time
-            print(counter)
-            print(num)
+            CheckMessage()
     modem.close()
 
 if __name__ == '__main__':
