@@ -281,7 +281,7 @@ def testSMS():
 
         if y.startswith('OK'):
             print('Sent')
-                
+            smscol.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})       
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')    
 
