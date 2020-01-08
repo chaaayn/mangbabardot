@@ -11,6 +11,8 @@ myclient = MongoClient(mongodb_host, mongodb_port)
 mydb = myclient["testdb"]
 numcol = mydb["number"]
 smscol = mydb["sms"]
+smsGlobe = mydb["smsGlobe"]
+smsSmart = mydb["smsSmart"]
 
 globe = [ "63904", "63905", "63906", "63915", "63916", "63917", "63926", "63927",
           "63935", "63936", "63937", "63945", "63956", "63965", "63966", "63967",
@@ -18,19 +20,18 @@ globe = [ "63904", "63905", "63906", "63915", "63916", "63917", "63926", "63927"
 
 smart = [ "63813", "63908", "63911", "63913", "63914", "63918", "63913", "63919",
           "63920", "63921", "63928", "63929", "63939", "63947", "63949", "63961",
-          "63970", "63981", "63989", "63998", "63999"]
+          "63970", "63981", "63989", "63998", "63999", "63922"]
 
 def CheckMessage():
     simcheck = smscol.find_one({"Status":"Pending"})
     if simcheck is None:
-        print "No more messages."
+        print ("No more messages.")
     else:
         sim_number = simcheck['Receiver']
         sim_prefix = sim_number[0:5]
         if sim_prefix in globe:
             print "Globe"
             StartupGlobe()
-            
         elif sim_prefix in smart:
             print "Smart"
             StartupSmart()
@@ -115,18 +116,18 @@ def testSMS():
     x = smscol.find_one({"Status":"Pending"})
     penMessage = x['Message']
     
-    if len(penMessage) <= 130:
-        global num
+    if len(penMessage) <= 120:
         sender = x['Sender']
         num = x['Receiver']
-        date1 = x['Date']
+        date1 = str(x['Date'])
+        date2 = date1[0:19]
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
         modem.write(bytes('Message: "%s"\r\n' % penMessage))
         time.sleep(0.5)
         modem.write(bytes('Sender: %s\r\n' % sender))
         time.sleep(0.5)
-        modem.write(bytes('Date: %s' % date1))
+        modem.write(bytes('Date: %s' % date2))
         time.sleep(0.5)
         modem.write(bytes(ascii.ctrl('z')))
         time.sleep(0.5)
@@ -153,17 +154,15 @@ def testSMS():
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
             
-    elif len(penMessage) > 130:
+    elif len(penMessage) <= 240:
         stat = True
-        global num
         sender = x['Sender']
         num = x['Receiver']
-        date1 = x['Date']
+        date1 = str(x['Date'])
+        date2 = date1[0:19]
         v = len(penMessage)
-        vv = v / 3
-        vvv = v - vv
-        message1 = penMessage[0:vv]
-        message2 = penMessage[vv:vvv]
+        message1 = penMessage[0:137]
+        message2 = penMessage[137:v]
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
         modem.write(bytes('(1 of 2) Message: "%s"\r\n' % message1))
@@ -198,7 +197,7 @@ def testSMS():
         time.sleep(0.5)
         modem.write(bytes('Sender: %s\r\n' % sender))
         time.sleep(0.5)
-        modem.write(bytes('Date: %s' % date1))
+        modem.write(bytes('Date: %s' % date2))
         time.sleep(0.5)
         modem.write(bytes(ascii.ctrl('z')))
         time.sleep(0.5)
@@ -225,17 +224,16 @@ def testSMS():
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
 
-    elif len(penMessage) > 300:
+    elif len(penMessage) > 240:
         stat = True
-        global num
         sender = x['Sender']
         num = x['Receiver']
-        date1 = x['Date']
+        date1 = str(x['Date'])
+        date2 = date1[0:19]
         v = len(penMessage)
-        vv = v / 2
-        message1 = penMessage[0:vv]
-        message2 = penMessage[vv:v]
-        message3 = penMessage[vvv:v]
+        message1 = penMessage[0:137]
+        message2 = penMessage[137:241]
+        message3 = penMessage[241:v]
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
         modem.write(bytes('(1 of 3) Message: "%s"\r\n' % message1))
@@ -301,7 +299,7 @@ def testSMS():
         time.sleep(0.5)
         modem.write(bytes('Sender: %s\r\n' % sender))
         time.sleep(0.5)
-        modem.write(bytes('Date: %s' % date1))
+        modem.write(bytes('Date: %s' % date2))
         time.sleep(0.5)
         modem.write(bytes(ascii.ctrl('z')))
         time.sleep(0.5)

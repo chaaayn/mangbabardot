@@ -46,7 +46,7 @@ def del_sms():
     smscol.delete_one(del_sms)
     return redirect(url_for('get_sms'))
 
-@app.route('/test1/sendsms', methods=['POST'])
+@app.route('/test1/sms', methods=['POST'])
 def send_sms():
     cur_time = datetime.now()
     if len(request.json['Receiver']) == 12:
@@ -87,12 +87,14 @@ def get_contacts():
 
 @app.route('/test1/contacts', methods=['POST'])
 def add_contact():
-    
-    req_cont = {"Name":request.json["Name"],
-                "Number":request.json["Number"]
-                }
-    numcol.insert_one(req_cont)
-    return jsonify({"Result":"Contact Added"}),201
+    if (request.json["Number"]) == 12: 
+        req_cont = {"Name":request.json["Name"],
+                    "Number":request.json["Number"]
+                    }
+        numcol.insert_one(req_cont)
+        return jsonify({"Result":"Contact Added"}),201
+    else:
+        return jsonify({"Invalid Number"})
     
     
 """req_data = request.get_json()
@@ -112,7 +114,7 @@ def get_reports():
     cur_time = datetime.now()
     get_sent = smscol.count_documents({"Status":"Processed"})
     get_pending = smscol.count_documents({"Status":"Pending"})
-    return jsonify({"Sent messages ": get_sent,
+    return jsonify({"Sent messages": get_sent,
                    "Unsent messages": get_pending})
     
 

@@ -10,6 +10,8 @@ mydb = myclient["testdb"]
 numcol = mydb["number"]
 smscol = mydb["sms"]
 simtest = mydb["simtest"]
+simGlobe = mydb["simGlobe"]
+simSmart = mydb["simSmart"]
 
 """x = smscol.find_one({"Status":"Pending"})
 if x == None:
@@ -53,3 +55,21 @@ simtest.insert({"Globe": "Globe sent", "Number": 0})
 simtest.update_one({"Globe": "Globe sent"}, { "$set": {"Number": 1}})
 q = simtest.find_one()
 print ("Sent messages: " + str(q["Number"]))
+
+qw = xy['Message']
+print qw
+qwe = len(qw)
+print qwe
+qwer = qwe / 2
+print qwer
+qwert = qw[0:qwer]
+print qwert
+qwerty = qw[qwer:qwe]
+print qwerty
+
+for x in simGlobe.find({"prefix": abc}):
+    print x
+    
+
+
+
