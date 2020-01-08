@@ -14,14 +14,15 @@ smscol = mydb["sms"]
 smsSmart = mydb["smsSmart"]
 simSmart = mydb["simSmart"]
 smart = mydb["smart"]
+startCheck = False
 
 def CheckMessage():
     smsCheck = smart.find_one({"Status":"Pending"})
     if smsCheck is None:
         print "No more messages."
-        time.sleep(20)
+        time.sleep(15)
     else:
-        StartupSmart()
+        testSMS()
         
 def StartupSmart():
     print ("Starting Smart")
@@ -59,7 +60,6 @@ def StartupSmart():
     sPrint = sPrint.rstrip('\r\n')
     
     print ("AT+CMGF=1: "+ sPrint)
-    testSMS()
     
 def testSMS():
     stat = True
@@ -279,12 +279,10 @@ def testSMS():
         
 
 def main():
-  
-    current_time = time.time()
-    previous_time = time.ctime(current_time)
     while True:
         CheckMessage()
     modem.close()
 
 if __name__ == '__main__':
+    StartupSmart()
     main()
