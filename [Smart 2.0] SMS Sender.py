@@ -24,7 +24,7 @@ def CheckMessage():
         print "No more messages."
         time.sleep(5)
     else:
-        testSMS()
+        SMS()
         
 def StartupSmart():
     print ("Starting Smart")
@@ -66,7 +66,7 @@ def StartupSmart():
     
     print ("AT+CMGF=1: "+ sPrint)
     
-def testSMS():
+def SMS():
     stat = True
     x = smart.find_one({"Status":"Pending"})
     penMessage = x['Message']

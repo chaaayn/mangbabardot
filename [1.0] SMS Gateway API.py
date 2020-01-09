@@ -37,7 +37,7 @@ def get_sms():
         sms = [serial(item) for item in smscol.find()]
         smart1 = [serial(item1) for item1 in smart.find()]
         globe1 = [serial(item1) for item1 in globe.find()]
-        return jsonify({'Messages': sms}, {"Smart": smart1}, {"Globe": globe1})
+        return jsonify({"Smart": smart1}, {"Globe": globe1})
 
 @app.route('/test1/sms/globe', methods=['GET'])
 def get_smsGlobe():
@@ -79,7 +79,7 @@ def del_sms():
 @app.route('/test1/sms', methods=['POST'])
 def send_sms():
     cur_time = datetime.now()
-    if len(request.json['Receiver']) == 12 and len(request.json["Sender"]) < 9:
+    if len(request.json['Receiver']) == 12:
         sms = {"Sender":request.json["Sender"],
                "Receiver":request.json["Receiver"],
                "Message":request.json["Message"],

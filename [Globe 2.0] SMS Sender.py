@@ -15,6 +15,7 @@ smscol = mydb["sms"]
 smsGlobe = mydb["smsGlobe"]
 simGlobe = mydb["simGlobe"]
 globe = mydb["globe"]
+startCheck = False
 
 
 def CheckMessage():
@@ -23,7 +24,7 @@ def CheckMessage():
         print "No more messages."
         time.sleep(5)
     else:
-        testSMS()
+        sendSMS()
         
 def StartupGlobe():
     print ("Starting Globe")
@@ -32,7 +33,7 @@ def StartupGlobe():
     for port in reversed(portlist):
 
         try:
-            if "HUAWEI Mobile" == port[1]:
+            if "ZTE WCDMA Technologies MSM" == port[1]:
                 print "Device connected.", port[1]
                 modem = serial.Serial(port[0], 115200, timeout = 5)
                 break 
@@ -65,7 +66,7 @@ def StartupGlobe():
     
     print ("AT+CMGF=1: "+ sPrint)
     
-def testSMS():
+def sendSMS():
     stat = True
     x = globe.find_one({"Status":"Pending"})
     penMessage = x['Message']
