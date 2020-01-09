@@ -10,6 +10,8 @@ mydb = myclient["testdb"]
 numcol = mydb["number"]
 smscol = mydb["sms"]
 simtest = mydb["simtest"]
+globe = mydb["globe"]
+smart = mydb["smart"]
 simGlobe = mydb["simGlobe"]
 simSmart = mydb["simSmart"]
 
@@ -69,7 +71,6 @@ print qwerty
 
 for x in simGlobe.find({"prefix": abc}):
     print x
-    
 
 
 

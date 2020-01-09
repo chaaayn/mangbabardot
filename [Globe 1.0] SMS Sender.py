@@ -20,16 +20,23 @@ def CheckMessage():
     if smsCheck is None:
         print "No more messages."
         time.sleep(20)
+    else:
+        StartupGlobe()
 def StartupGlobe():
     print ("Starting Globe")
-    global modem
+    global modem = None
+    
     portlist = list(serial.tools.list_ports.comports())
     for port in reversed(portlist):
 
         try:
+            
+
             if "HUAWEI Mobile" == port[1]:
                 print "Device connected.", port[1]
                 modem = serial.Serial(port[1], 115200, timeout = 5)
+                if modem is None:
+                    print ("Device not connected.")
                 break 
             else:
                 print None

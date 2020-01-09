@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import serial, csv, os, time, shutil, pprint
+import serial, csv, os, time, shutil, pprint, threading
+from threading import Thread
 import serial.tools.list_ports
 from pymongo import MongoClient
 
@@ -16,11 +17,12 @@ simSmart = mydb["simSmart"]
 smart = mydb["smart"]
 startCheck = False
 
+
 def CheckMessage():
     smsCheck = smart.find_one({"Status":"Pending"})
     if smsCheck is None:
         print "No more messages."
-        time.sleep(15)
+        time.sleep(5)
     else:
         testSMS()
         
@@ -36,7 +38,10 @@ def StartupSmart():
                 modem = serial.Serial(port[0], 115200, timeout = 5)
                 break 
             else:
-                print None
+                time.sleep(10)
+                print "Device not detected."
+                StartupSmart().close()
+                
                 
         except Exception as e:
             print e
@@ -66,7 +71,7 @@ def testSMS():
     x = smart.find_one({"Status":"Pending"})
     penMessage = x['Message']
     
-    if len(penMessage) <= 120:
+    if len(penMessage) <= 100:
         sender = x['Sender']
         num = x['Receiver']
         date1 = str(x['Date'])
@@ -275,14 +280,14 @@ def testSMS():
             smart.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
-        
-        
 
 def main():
     while True:
         CheckMessage()
+        time.sleep(1)
     modem.close()
 
 if __name__ == '__main__':
     StartupSmart()
+    time.sleep(1)
     main()
