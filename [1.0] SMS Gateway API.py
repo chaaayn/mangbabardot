@@ -31,17 +31,13 @@ def login():
 
 @app.route('/test1/sms', methods=['GET'])
 def get_sms():
-    if smscol.count_documents({}) == 0:
+    if smscol.count_documents({}) and smart.count_documents({}) and globe.count_documents({}) == 0:
         return ("No message available.")
     else:
-        for x in smscol.find():
-           if smscol.find() is None:
-               return jsonify({"Messages": " Empty"})
-           else:
-               sms = [serial(item) for item in smscol.find()]
-               smart1 = [serial(item1) for item1 in smart.find()]
-               globe1 = [serial(item1) for item1 in globe.find()]
-               return jsonify({'Messages': sms}, {"Smart": smart1}, {"Globe": globe1})
+        sms = [serial(item) for item in smscol.find()]
+        smart1 = [serial(item1) for item1 in smart.find()]
+        globe1 = [serial(item1) for item1 in globe.find()]
+        return jsonify({'Messages': sms}, {"Smart": smart1}, {"Globe": globe1})
 
 @app.route('/test1/sms/globe', methods=['GET'])
 def get_smsGlobe():
@@ -50,10 +46,10 @@ def get_smsGlobe():
     else:
         for x in globe.find():
            if globe.find() is None:
-               return jsonify({"Messages": " Empty"})
+               return jsonify({"Globe Messages": " Empty"})
            else:
                sms = [serial(item) for item in globe.find()]
-               return jsonify({'Messages': sms})
+               return jsonify({'Globe Messages': sms})
   
             
 @app.route('/test1/sms/smart', methods=['GET'])
@@ -63,22 +59,27 @@ def get_smsSmart():
     else:
         for x in smart.find():
            if smart.find() is None:
-               return jsonify({"Messages": " Empty"})
+               return jsonify({"Smart Messages": " Empty"})
            else:
                sms = [serial(item) for item in smart.find()]
-               return jsonify({'Messages': sms})
+               return jsonify({'Smart Messages': sms})
   
 @app.route('/test1/sms', methods=['DELETE'])
 def del_sms():
 
     del_sms = request.get_json()
-    smscol.delete_one(del_sms)
+    for x in smscol.find(del_sms):
+        smscol.delete_one(del_sms)
+    for x in smart.find(del_sms):
+        smart.delete_one(del_sms)
+    for x in globe.find(del_sms):
+        globe.delete_one(del_sms)
     return redirect(url_for('get_sms'))
 
 @app.route('/test1/sms', methods=['POST'])
 def send_sms():
     cur_time = datetime.now()
-    if len(request.json['Receiver']) == 12:
+    if len(request.json['Receiver']) == 12 and len(request.json["Sender"]) < 9:
         sms = {"Sender":request.json["Sender"],
                "Receiver":request.json["Receiver"],
                "Message":request.json["Message"],
@@ -92,9 +93,9 @@ def send_sms():
             return jsonify({"Result":"Message Added to Pending. (Smart)"})
         for x1 in simGlobe.find({"prefix": cd}):
             y1 = globe.insert_one(sms)
-            return jsonify({"Globe":"Message Added to Pending. (Globe)"})
+            return jsonify({"Result":"Message Added to Pending. (Globe)"})
     else:
-        return jsonify({"Result":"Invalid Number."})
+        return jsonify({"Result":"Invalid Input. Check again.", "Guide":"Start number with country code. Ex. 63912-345-6789 and Maximum Sender character is 8."})
 
 """//DISPLAY CONTACTS//"""
 @app.route('/test1/contacts', methods=['GET'])
