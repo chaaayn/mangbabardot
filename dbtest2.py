@@ -1,5 +1,6 @@
 from pymongo import MongoClient
-import os, csv, time
+import os, csv, time, operator
+from datetime import datetime, timedelta, date
 
 current_time = time.time()
 prev_time = time.ctime(current_time)
@@ -69,8 +70,28 @@ print qwert
 qwerty = qw[qwer:qwe]
 print qwerty
 
-for x in simGlobe.find({"prefix": abc}):
-    print x
+print date.today()
+ty = datetime.today().replace(day=1, month=1)
+yx = timedelta(weeks=1)
+print xy['Date'] - ty
+print ty + yx
+
+"""#report today
+oo = datetime.today()
+xl = datetime.time(datetime.now())
+print xl.month()
+oo1 = datetime.today() + timedelta()
+oo2 = datetime.today() - timedelta(days=1)
+print oo1
+print oo2
+
+o = oo.strftime("%H:%M")
+print o"""
+
+oo1 = datetime.today().replace(day=1, hour=0, minute=0, second=0, microsecond = 0)
+oo2 = datetime.today().replace(day=31, minute=59, second=59, microsecond = 999999)
+print oo1
+print oo2
 
 
 

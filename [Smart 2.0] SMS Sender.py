@@ -3,6 +3,7 @@ import serial, csv, os, time, shutil, pprint, threading
 from threading import Thread
 import serial.tools.list_ports
 from pymongo import MongoClient
+from datetime import datetime
 
 from curses import ascii
 
@@ -22,6 +23,7 @@ def CheckMessage():
     smsCheck = smart.find_one({"Status":"Pending"})
     if smsCheck is None:
         print "No more messages."
+        print datetime.now()
         time.sleep(5)
     else:
         SMS()
@@ -71,19 +73,14 @@ def SMS():
     x = smart.find_one({"Status":"Pending"})
     penMessage = x['Message']
     
-    if len(penMessage) <= 100:
+    if len(penMessage) <= 160:
         sender = x['Sender']
         num = x['Receiver']
         date1 = str(x['Date'])
         date2 = date1[0:19]
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
-        modem.write(bytes('Message: "%s"\r\n' % penMessage))
-        time.sleep(0.5)
-        modem.write(bytes('Sender: %s\r\n' % sender))
-        time.sleep(0.5)
-        modem.write(bytes('Date: %s' % date2))
-        time.sleep(0.5)
+        modem.write(bytes(penMessage))
         modem.write(bytes(ascii.ctrl('z')))
         time.sleep(0.5)
         while stat:
@@ -105,22 +102,21 @@ def SMS():
 
         if y.startswith('OK'):
             print('Sent')
+            print datetime.now()
             smart.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
             
-    elif len(penMessage) <= 240:
+    elif len(penMessage) <= 160:
         stat = True
         sender = x['Sender']
         num = x['Receiver']
         date1 = str(x['Date'])
         date2 = date1[0:19]
         v = len(penMessage)
-        message1 = penMessage[0:137]
-        message2 = penMessage[137:v]
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
-        modem.write(bytes('(1 of 2) Message: "%s"\r\n' % message1))
+        modem.write(bytes(penMessage))
         time.sleep(0.5)
         modem.write(bytes(ascii.ctrl('z')))
         time.sleep(0.5)
@@ -148,11 +144,9 @@ def SMS():
         stat = True
         modem.write(bytes('AT+CMGS="%s"\r\n' % num))
         time.sleep(0.5)
-        modem.write(bytes('(2 of 2) Message: "%s"\r\n' % message2))
+        modem.write(bytes(penMessage[161:v]))
         time.sleep(0.5)
-        modem.write(bytes('Sender: %s\r\n' % sender))
-        time.sleep(0.5)
-        modem.write(bytes('Date: %s' % date2))
+        modem.write(bytes('This automated message is from %s.\r\n' % sender))
         time.sleep(0.5)
         modem.write(bytes(ascii.ctrl('z')))
         time.sleep(0.5)
@@ -175,6 +169,7 @@ def SMS():
 
         if y.startswith('OK'):
             print('Sent')
+            print datetime.now()
             smart.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')
@@ -277,6 +272,7 @@ def SMS():
     
         if y.startswith('OK'):
             print('Sent')
+            print datetime.now()
             smart.update_one({"Status":"Pending"},{ "$set":{"Status":"Processed"}})    
         elif y.startswith('+CMS') or y.startswith('^RSSI'):
             print('Failed.')

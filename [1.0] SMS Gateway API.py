@@ -1,5 +1,5 @@
 import pymongo, pprint, time, os
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 from flask import Flask, jsonify, request, abort, make_response, redirect, url_for
@@ -146,9 +146,46 @@ def get_reports():
                    "Unsent Globe messages": get_pendingGlobe,
                     "Sent Smart messages": get_sentSmart,
                     "Unsent Smart messages": get_pendingSmart,
-                    "Time": cur_time})
-    
+                    "zTime": cur_time})
 
+@app.route('/test1/reports/today', methods=['GET'])
+def get_reportsT():
+    oo = datetime.today()
+    oo1 = datetime.today().replace(hour=23, minute=59, second=59, microsecond = 999999)
+    oo2 = datetime.today().replace(hour=0, minute=0, second=0, microsecond = 0)
+    print oo1, oo2
+    oo4 = smart.count_documents({"Date":{"$lt": oo1, "$gt": oo2}})
+    oo6 = globe.count_documents({"Date":{"$lt": oo1, "$gt": oo2}})
+    oo7 = oo4 + oo6
+    return jsonify({"Smart Messages Today":oo4},{"Globe Messages Today":oo6},{"Total messages today":oo7},
+                    {"zTime": oo})
+
+@app.route('/test1/reports/month', methods=['GET'])
+def get_reportsM():
+    oo = datetime.today()
+    oo1 = datetime.today().replace(day=31,hour=0, minute=0, second=0, microsecond = 0)
+    oo2 = datetime.today().replace(day=1,hour=23, minute=59, second=59, microsecond = 999999)
+    oo4 = smart.count_documents({"Date":{"$lt": oo1, "$gt": oo2}})
+    oo6 = globe.count_documents({"Date":{"$lt": oo1, "$gt": oo2}})
+    oo7 = oo4 + oo6
+    return jsonify({"Smart Messages this week":oo4},{"Globe Messages this week":oo6},{"Total messages this week":oo7},
+                    {"zTime": oo})
+
+@app.route('/test1/reports/year', methods=['GET'])
+def get_reportsY():
+    oo = datetime.today()
+    oo1 = datetime.today().replace(month=12,day=31,hour=0, minute=0, second=0, microsecond = 0)
+    oo2 = datetime.today().replace(month=1,day=1,hour=23, minute=59, second=59, microsecond = 999999)
+    oo4 = smart.count_documents({"Date":{"$lt": oo1, "$gt": oo2}})
+    oo6 = globe.count_documents({"Date":{"$lt": oo1, "$gt": oo2}})
+    oo7 = oo4 + oo6
+    return jsonify({"Smart Messages this year":oo4},{"Globe Messages this year":oo6},{"Total messages this year":oo7},
+                    {"zTime": oo})
+
+
+
+
+    
 if __name__ == '__main__':
 
     app.run(host='192.168.0.98')
