@@ -35,8 +35,8 @@ def StartupGlobe():
     for port in reversed(portlist):
 
         try:
-            if "ZTE WCDMA Technologies MSM" == port[1]:
-                print "Device connected.", port[1]
+            if "HUAWEI Mobile" == port[1]:
+                print "Device connected.", port[0]
                 modem = serial.Serial(port[0], 115200, timeout = 5)
                 break 
             else:

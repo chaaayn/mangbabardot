@@ -38,7 +38,7 @@ def get_sms():
         smart1 = [serial(item1) for item1 in smart.find()]
         globe1 = [serial(item1) for item1 in globe.find()]
         return jsonify({"Smart": smart1}, {"Globe": globe1})
-
+    
 @app.route('/test1/sms/globe', methods=['GET'])
 def get_smsGlobe():
     if globe.count_documents({}) == 0:
@@ -188,4 +188,4 @@ def get_reportsY():
     
 if __name__ == '__main__':
 
-    app.run(host='192.168.0.98')
+    app.run(host='192.168.26.107',port='9000')
